@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  html {
+    font-family: 'Nunito', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    margin: 0;
+    background: theme('colors.sunshine.50');
+    color: theme('colors.warm.700');
+    overscroll-behavior: none;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Playfair Display', 'Noto Serif SC', STSong, serif;
+    color: theme('colors.warm.800');
+  }
+}
+
+@layer components {
+  .app-container {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100dvh;
+    background: theme('colors.sunshine.50');
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}

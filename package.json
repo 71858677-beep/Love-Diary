@@ -1,0 +1,47 @@
+{
+  "name": "love-diary",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ci": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .vue,.ts,.tsx",
+    "lint:fix": "eslint . --ext .vue,.ts,.tsx --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "typecheck": "vue-tsc --noEmit",
+    "generate-pwa": "vite build && echo 'PWA assets generated in dist/'"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
+    "lucide-vue-next": "^0.344.0",
+    "pinia": "^2.1.7",
+    "vue": "^3.5.34",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.3",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitejs/plugin-vue": "^6.0.6",
+    "@vue/test-utils": "^2.4.4",
+    "@vue/tsconfig": "^0.9.1",
+    "autoprefixer": "^10.4.17",
+    "eslint": "^8.56.0",
+    "eslint-plugin-vue": "^9.20.0",
+    "jsdom": "^23.2.0",
+    "postcss": "^8.4.33",
+    "prettier": "^3.2.0",
+    "tailwindcss": "^3.4.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.0.12",
+    "vite-plugin-pwa": "^0.18.0",
+    "vitest": "^1.2.0",
+    "vue-tsc": "^3.2.8"
+  }
+}

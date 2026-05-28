@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(cd /tmp)",
+      "Bash(rm -rf love-diary-temp)",
+      "Read(//tmp/**)",
+      "Read(//tmp/love-diary-temp/**)",
+      "Bash(cp package.json vite.config.ts tsconfig.json tsconfig.app.json tsconfig.node.json index.html \"d:/code/Love_Diary/\")",
+      "Bash(cp -r public \"d:/code/Love_Diary/\")",
+      "Bash(cp src/main.ts src/App.vue src/style.css \"d:/code/Love_Diary/src/\")",
+      "Bash(cp -r src/assets src/components \"d:/code/Love_Diary/src/\")",
+      "Bash(npm install *)"
+    ]
+  }
+}
