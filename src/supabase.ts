@@ -11,7 +11,7 @@ export function ensureAuth(): Promise<void> {
   if (!_ready) {
     _ready = supabase.auth.signInWithPassword({
       email: 'love@diary.app',
-      password: import.meta.env.VITE_SUPABASE_PASSWORD,
+      password: 'tzylyf251018',
     }).then(({ error }) => {
       if (error) console.error('Auth failed:', error.message)
     })
