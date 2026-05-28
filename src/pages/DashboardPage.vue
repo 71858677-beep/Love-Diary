@@ -146,6 +146,12 @@ function updateMyStatus(status: string) {
   lightTap()
 }
 
+function updatePartnerStatus(status: string) {
+  if (identity.current !== '小白') return
+  dashboardStore.updatePartnerStatus(status)
+  lightTap()
+}
+
 // ── Avatar upload ──
 async function uploadUserAvatar() {
   if (identity.current !== '小鸡毛') return
@@ -164,6 +170,13 @@ async function uploadPartnerAvatar() {
 }
 
 // ── Pat partner ──
+function patHim(event: MouseEvent) {
+  lightTap()
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
+  const x = rect.left + rect.width / 2
+  heartBurst.value?.spawn(x, 5)
+}
+
 function patHer(event: MouseEvent) {
   lightTap()
   const rect = (event.currentTarget as HTMLElement).getBoundingClientRect()
@@ -335,29 +348,45 @@ function todayStr(): string {
     <section class="grid grid-cols-2 gap-4">
       <!-- 小鸡毛 -->
       <div class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 text-center">
-        <button
-          class="w-16 h-16 mx-auto rounded-full bg-sunshine-200 border-2 border-sunshine-300 flex items-center justify-center text-2xl overflow-hidden transition-all duration-150 hover:shadow-diary-md relative group cursor-pointer"
-          title="点击更换头像"
-          @click="uploadUserAvatar"
-        >
-          <img v-if="dashboardStore.userAvatar" :src="dashboardStore.userAvatar" class="w-full h-full object-cover" />
-          <span v-else>🧑‍💻</span>
-          <span class="absolute inset-0 bg-warm-800/40 flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition-opacity rounded-full">换头像</span>
-        </button>
-        <p class="mt-2 font-semibold text-warm-800 text-sm">小鸡毛</p>
-        <div class="mt-2 flex flex-wrap gap-1 justify-center">
+        <div class="relative inline-block">
           <button
-            v-for="opt in dashboardStore.statusOptions"
-            :key="opt.value"
-            class="px-2.5 py-1 text-[11px] rounded-full border transition-all duration-150 active:scale-90"
-            :class="dashboardStore.userStatus === opt.value
-              ? 'bg-sunshine-200 border-sunshine-300 text-warm-700 font-medium'
-              : 'bg-white border-warm-200 text-warm-400 hover:border-warm-300'"
-            @click="updateMyStatus(opt.value)"
+            class="w-16 h-16 mx-auto rounded-full bg-sunshine-200 border-2 border-sunshine-300 flex items-center justify-center text-2xl overflow-hidden transition-all duration-150 hover:shadow-diary-md relative group cursor-pointer"
+            title="点击更换头像"
+            @click="uploadUserAvatar"
           >
-            {{ opt.emoji }} {{ opt.label }}
+            <img v-if="dashboardStore.userAvatar" :src="dashboardStore.userAvatar" class="w-full h-full object-cover" />
+            <span v-else>🧑‍💻</span>
+            <span class="absolute inset-0 bg-warm-800/40 flex items-center justify-center text-white text-[10px] opacity-0 group-hover:opacity-100 transition-opacity rounded-full">换头像</span>
+          </button>
+          <button
+            class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-sunshine-300 border-2 border-white flex items-center justify-center text-xs transition-all duration-150 active:scale-90 hover:shadow-diary-md cursor-pointer"
+            @click="patHim"
+          >
+            👋
           </button>
         </div>
+        <p class="mt-2 font-semibold text-warm-800 text-sm">小鸡毛</p>
+        <!-- Status: show all options when identity is 小鸡毛, else show only current -->
+        <template v-if="identity.current === '小鸡毛'">
+          <div class="mt-2 flex flex-wrap gap-1 justify-center">
+            <button
+              v-for="opt in dashboardStore.statusOptions"
+              :key="opt.value"
+              class="px-2.5 py-1 text-[11px] rounded-full border transition-all duration-150 active:scale-90"
+              :class="dashboardStore.userStatus === opt.value
+                ? 'bg-sunshine-200 border-sunshine-300 text-warm-700 font-medium'
+                : 'bg-white border-warm-200 text-warm-400 hover:border-warm-300'"
+              @click="updateMyStatus(opt.value)"
+            >
+              {{ opt.emoji }} {{ opt.label }}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <span class="inline-block mt-1 px-2.5 py-1 text-[11px] rounded-full bg-sunshine-100 text-warm-600 font-medium">
+            {{ dashboardStore.statusOptions.find(o => o.value === dashboardStore.userStatus)?.emoji }} {{ dashboardStore.statusOptions.find(o => o.value === dashboardStore.userStatus)?.label }}
+          </span>
+        </template>
       </div>
 
       <!-- 小白 -->
@@ -380,14 +409,32 @@ function todayStr(): string {
           </button>
         </div>
         <p class="mt-2 font-semibold text-warm-800 text-sm">小白</p>
-        <span class="inline-block mt-1 px-2.5 py-1 text-[11px] rounded-full bg-rose-100 text-warm-600 font-medium">
-          {{ dashboardStore.partnerStatusLabel || '想你中 💕' }}
-        </span>
+        <!-- Status: show all options when identity is 小白, else show only current -->
+        <template v-if="identity.current === '小白'">
+          <div class="mt-2 flex flex-wrap gap-1 justify-center">
+            <button
+              v-for="opt in dashboardStore.statusOptions"
+              :key="opt.value"
+              class="px-2.5 py-1 text-[11px] rounded-full border transition-all duration-150 active:scale-90"
+              :class="dashboardStore.partnerStatus === opt.value
+                ? 'bg-sunshine-200 border-sunshine-300 text-warm-700 font-medium'
+                : 'bg-white border-warm-200 text-warm-400 hover:border-warm-300'"
+              @click="updatePartnerStatus(opt.value)"
+            >
+              {{ opt.emoji }} {{ opt.label }}
+            </button>
+          </div>
+        </template>
+        <template v-else>
+          <span class="inline-block mt-1 px-2.5 py-1 text-[11px] rounded-full bg-rose-100 text-warm-600 font-medium">
+            {{ dashboardStore.partnerStatusLabel || '想你中 💕' }}
+          </span>
+        </template>
       </div>
     </section>
 
     <p class="text-center text-xs text-warm-400">
-      点击头像更换照片 · 点击小白的手手拍一拍 💕
+      点击头像更换照片 · 点击手手拍一拍 💕
     </p>
 
     <!-- ========== Mailbox ========== -->

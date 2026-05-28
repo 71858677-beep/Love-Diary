@@ -7,7 +7,7 @@ const DEFAULT_STATUS_OPTIONS: StatusOption[] = [
   { value: 'studying', label: '学习中', emoji: '📚' },
   { value: 'eating', label: '干饭中', emoji: '🍜' },
   { value: 'sleeping', label: '睡觉中', emoji: '💤' },
-  { value: 'working', label: '搬砖中', emoji: '💼' },
+  { value: 'working', label: '度假中', emoji: '💼' },
   { value: 'missing', label: '想你中', emoji: '💕' },
 ]
 
