@@ -8,7 +8,6 @@ import {
   Heart,
   CalendarHeart,
 } from 'lucide-vue-next'
-import { computed } from 'vue'
 
 const route = useRoute()
 const router = useRouter()

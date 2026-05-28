@@ -219,32 +219,6 @@ const WEATHER_MAP: Record<string, string> = {
   </div>
 </template>
 
-<style>
-.love-modal-overlay {
-  position: fixed; inset: 0;
-  background: rgb(39 36 32 / 0.3);
-  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
-  z-index: 50;
-  display: flex; align-items: flex-end; justify-content: center;
-  animation: love-fade-in 0.2s ease-out;
-}
-.love-modal-content {
-  background: #fff; border-radius: 16px 16px 0 0;
-  width: 100%; max-width: 480px; max-height: 80vh;
-  overflow-y: auto; padding: 24px;
-  animation: love-slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@media (min-width: 640px) {
-  .love-modal-overlay { align-items: center; }
-  .love-modal-content { border-radius: 16px; margin: 16px; }
-}
-@keyframes love-fade-in { from { opacity: 0; } to { opacity: 1; } }
-@keyframes love-slide-up {
-  from { opacity: 0; transform: translateY(24px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-</style>
-
 <style scoped>
 .line-clamp-3 {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;

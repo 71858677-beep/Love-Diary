@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref } from 'vue'
 
 const hearts = ref<{ id: number; x: number; delay: number; emoji: string }[]>([])
 let nextId = 0

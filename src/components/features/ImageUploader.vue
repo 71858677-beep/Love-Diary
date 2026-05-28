@@ -15,8 +15,6 @@ const emit = defineEmits<{
 
 const { compressImage, openFilePicker } = useImageUpload()
 
-const VIDEO_TYPES = ['video/mp4', 'video/webm', 'video/ogg', 'video/quicktime', 'video/x-msvideo', 'video/*']
-
 function isVideo(base64: string): boolean {
   return base64.startsWith('data:video/')
 }

@@ -109,7 +109,7 @@ function onPickerScroll(col: string, event: Event) {
   }
 }
 
-function onPickerWheel(col: string, event: WheelEvent) {
+function onPickerWheel(_col: string, event: WheelEvent) {
   event.preventDefault()
   const el = event.currentTarget as HTMLElement
   const items = Array.from(el.querySelectorAll('.date-picker-item'))

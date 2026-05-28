@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
-import { useRoute } from 'vue-router'
 import { useIdentityStore } from '@/stores/identity'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useFragmentsStore } from '@/stores/fragments'
@@ -10,8 +9,6 @@ import { useBucketListStore } from '@/stores/bucketlist'
 import { useLettersStore } from '@/stores/letters'
 import { useCareStore } from '@/stores/care'
 import BottomNav from './BottomNav.vue'
-
-const route = useRoute()
 const identity = useIdentityStore()
 
 // Preload all stores on mount

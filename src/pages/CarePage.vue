@@ -35,11 +35,6 @@ function nextMonth() {
   }
 }
 
-function goToToday() {
-  viewYear.value = today.getFullYear()
-  viewMonth.value = today.getMonth()
-}
-
 function isToday(day: number): boolean {
   return (
     day === today.getDate() &&
@@ -113,7 +108,7 @@ function onMonthPickerScroll(col: string, event: Event) {
   }
 }
 
-function onMonthPickerWheel(col: string, event: WheelEvent) {
+function onMonthPickerWheel(_col: string, event: WheelEvent) {
   event.preventDefault()
   const el = event.currentTarget as HTMLElement
   const items = Array.from(el.querySelectorAll('.month-picker-item'))
