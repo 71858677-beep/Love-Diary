@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useDashboardStore } from '@/stores/dashboard'
 import { useCareStore } from '@/stores/care'
 import { useLettersStore } from '@/stores/letters'
@@ -23,11 +23,16 @@ const { compressImage, openFilePicker } = useImageUpload()
 
 const heartBurst = ref<InstanceType<typeof HeartBurst> | null>(null)
 
+// Auto-refresh day counter
+const now = ref(new Date())
+let timer: ReturnType<typeof setInterval>
+onMounted(() => { timer = setInterval(() => { now.value = new Date() }, 60000) })
+onUnmounted(() => { clearInterval(timer) })
+
 const daysTogether = computed(() => {
   if (!dashboardStore.anniversaryDate) return null
   const start = new Date(dashboardStore.anniversaryDate)
-  const now = new Date()
-  return Math.floor((now.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+  return Math.floor((now.value.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
 })
 
 const showCareReminder = computed(() => careStore.isNearPredictedCycle())
@@ -189,7 +194,7 @@ const unreadCount = computed(() =>
 )
 
 function openWriteLetter() {
-  letterFrom.value = '小鸡毛'
+  letterFrom.value = identity.current
   letterTitle.value = ''
   letterContent.value = ''
   letterUnlockDate.value = ''
@@ -198,10 +203,8 @@ function openWriteLetter() {
 }
 
 function submitLetter() {
-  if (!letterTitle.value.trim() || !letterContent.value.trim() || !letterUnlockDate.value) return
-  const unlockDateTime = letterUnlockTime.value
-    ? `${letterUnlockDate.value}T${letterUnlockTime.value}:00`
-    : `${letterUnlockDate.value}T00:00:00`
+  if (!letterTitle.value.trim() || !letterContent.value.trim() || !letterUnlockDate.value || !letterUnlockTime.value) return
+  const unlockDateTime = `${letterUnlockDate.value}T${letterUnlockTime.value}:00`
 
   lettersStore.addLetter({
     id: generateId(),
@@ -260,6 +263,29 @@ function todayStr(): string {
     <div class="text-center pb-2">
       <h1 class="font-display text-3xl font-bold text-warm-800 tracking-wide">恋爱日记</h1>
       <p class="text-xs text-warm-400 mt-1 font-hand text-lg">记录属于我们的每一天</p>
+    </div>
+
+    <!-- Identity Switcher -->
+    <div class="flex items-center justify-center gap-3 py-1">
+      <span class="text-xs text-warm-400">当前身份：</span>
+      <button
+        class="px-3 py-1 rounded-full text-xs font-medium transition-all"
+        :class="identity.current === '小鸡毛'
+          ? 'bg-sunshine-400 text-warm-800 shadow-sm'
+          : 'bg-warm-100 text-warm-400 hover:bg-warm-200'"
+        @click="identity.setIdentity('小鸡毛')"
+      >
+        🧑‍💻 小鸡毛
+      </button>
+      <button
+        class="px-3 py-1 rounded-full text-xs font-medium transition-all"
+        :class="identity.current === '小白'
+          ? 'bg-sunshine-400 text-warm-800 shadow-sm'
+          : 'bg-warm-100 text-warm-400 hover:bg-warm-200'"
+        @click="identity.setIdentity('小白')"
+      >
+        💕 小白
+      </button>
     </div>
 
     <!-- ========== Anniversary ========== -->
@@ -427,28 +453,11 @@ function todayStr(): string {
           <h2 class="font-display text-lg text-warm-800 mb-4">写信 💌</h2>
 
           <div class="space-y-4">
-            <!-- From selector -->
+            <!-- From (locked to current identity) -->
             <div>
               <p class="text-xs text-warm-400 mb-2">发件人</p>
-              <div class="flex gap-2">
-                <button
-                  class="flex-1 py-2 rounded-xl border-2 text-sm font-medium transition-all"
-                  :class="letterFrom === '小鸡毛'
-                    ? 'border-sunshine-400 bg-sunshine-100 text-warm-700'
-                    : 'border-warm-200 text-warm-400'"
-                  @click="letterFrom = '小鸡毛'"
-                >
-                  🧑‍💻 小鸡毛
-                </button>
-                <button
-                  class="flex-1 py-2 rounded-xl border-2 text-sm font-medium transition-all"
-                  :class="letterFrom === '小白'
-                    ? 'border-sunshine-400 bg-sunshine-100 text-warm-700'
-                    : 'border-warm-200 text-warm-400'"
-                  @click="letterFrom = '小白'"
-                >
-                  💕 小白
-                </button>
+              <div class="py-2 px-3 rounded-xl border-2 border-sunshine-400 bg-sunshine-100 text-sm font-medium text-warm-700 text-center">
+                {{ identity.current === '小鸡毛' ? '🧑‍💻 小鸡毛' : '💕 小白' }}
               </div>
             </div>
 
@@ -465,7 +474,7 @@ function todayStr(): string {
                     class="w-full bg-sunshine-50 border border-warm-200 rounded-xl px-3 py-2.5 text-sm text-warm-700 outline-none focus:border-sunshine-400" />
                 </div>
                 <div>
-                  <p class="text-[10px] text-warm-400 mb-1">时间（可选）</p>
+                  <p class="text-[10px] text-warm-400 mb-1">时间</p>
                   <input v-model="letterUnlockTime" type="time"
                     class="w-full bg-sunshine-50 border border-warm-200 rounded-xl px-3 py-2.5 text-sm text-warm-700 outline-none focus:border-sunshine-400" />
                 </div>
@@ -476,7 +485,7 @@ function todayStr(): string {
           <div class="mt-6 flex gap-3">
             <DiaryButton variant="secondary" class="flex-1" @click="showLetterForm = false">取消</DiaryButton>
             <DiaryButton variant="primary" class="flex-1"
-              :disabled="!letterTitle.trim() || !letterContent.trim() || !letterUnlockDate"
+              :disabled="!letterTitle.trim() || !letterContent.trim() || !letterUnlockDate || !letterUnlockTime"
               @click="submitLetter">
               投递 💌
             </DiaryButton>
