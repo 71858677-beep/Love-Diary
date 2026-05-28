@@ -427,7 +427,7 @@ function todayStr(): string {
         </template>
         <template v-else>
           <span class="inline-block mt-1 px-2.5 py-1 text-[11px] rounded-full bg-rose-100 text-warm-600 font-medium">
-            {{ dashboardStore.partnerStatusLabel || '想你中 💕' }}
+            {{ dashboardStore.statusOptions.find(o => o.value === dashboardStore.partnerStatus)?.emoji }} {{ dashboardStore.statusOptions.find(o => o.value === dashboardStore.partnerStatus)?.label || '想你中 💕' }}
           </span>
         </template>
       </div>
