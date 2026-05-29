@@ -34,6 +34,7 @@ const completePhotos = ref<string[]>([])
 const completeNote = ref('')
 const completeDate = ref('')
 const viewCompletedId = ref<string | null>(null)
+const fullscreenImage = ref<string | null>(null)
 
 function openCreate() {
   editId.value = null
@@ -79,13 +80,18 @@ function toggleComplete(id: string) {
   const item = bucketStore.items.find((i) => i.id === id)
   if (!item) return
   if (item.completed) {
-    viewCompletedId.value = id
+    confirmUncompleteId.value = id
   } else {
     expandedId.value = id
     completePhotos.value = []
     completeNote.value = ''
     completeDate.value = new Date().toISOString().slice(0, 10)
   }
+}
+
+function openViewCompleted(id: string) {
+  viewCompletedId.value = id
+  fullscreenImage.value = null
 }
 
 function confirmUncomplete() {
@@ -168,7 +174,9 @@ function cancelComplete() {
               ✓
             </button>
 
-            <div class="flex-1 min-w-0">
+            <div class="flex-1 min-w-0"
+              :class="item.completed ? 'cursor-pointer' : ''"
+              @click.stop="item.completed ? openViewCompleted(item.id) : null">
               <span class="font-body text-sm"
                 :class="item.completed ? 'text-warm-500 line-through' : 'text-warm-700'">
                 {{ item.title }}
@@ -226,7 +234,8 @@ function cancelComplete() {
 
           <div v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.photos?.length" class="grid grid-cols-2 gap-2 mb-4">
             <img v-for="(img, idx) in bucketStore.items.find(i => i.id === viewCompletedId)?.photos" :key="idx"
-              :src="img" class="w-full rounded-lg object-cover border border-warm-100" />
+              :src="img" class="w-full rounded-lg object-cover border border-warm-100 cursor-pointer hover:opacity-90 transition-opacity"
+              @click.stop="fullscreenImage = img" />
           </div>
 
           <p v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.note"
@@ -238,6 +247,14 @@ function cancelComplete() {
             取消标记 🗑️
           </DiaryButton>
         </div>
+      </div>
+    </Teleport>
+
+    <!-- Fullscreen Image -->
+    <Teleport to="body">
+      <div v-if="fullscreenImage" class="love-modal-overlay" style="z-index: 100; background: rgb(0 0 0 / 0.85);" @click="fullscreenImage = null">
+        <img :src="fullscreenImage" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg" @click.stop />
+        <button class="absolute top-4 right-4 text-white text-2xl" @click="fullscreenImage = null">✕</button>
       </div>
     </Teleport>
 
