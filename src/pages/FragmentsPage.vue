@@ -143,7 +143,7 @@ const WEATHER_MAP: Record<string, string> = {
 
         <div @click="openDetail(fragment)" class="cursor-pointer">
           <DiaryCard clickable>
-            <p class="text-sm text-warm-700 line-clamp-3">{{ fragment.text }}</p>
+            <p class="text-sm text-warm-700 line-clamp-3 whitespace-pre-wrap">{{ fragment.text }}</p>
             <div v-if="fragment.images.length" class="flex gap-1.5 mt-3">
               <img v-for="(img, i) in fragment.images.slice(0, 4)" :key="i" :src="img"
                 class="w-16 h-16 rounded-lg object-cover border border-warm-100" />

@@ -141,7 +141,7 @@ function confirmDelete() {
           </div>
 
           <video v-if="detailFp.vlog" :src="detailFp.vlog" controls class="w-full rounded-lg mb-4" />
-          <p v-if="detailFp.notes" class="font-hand text-lg text-warm-600 leading-relaxed">{{ detailFp.notes }}</p>
+          <p v-if="detailFp.notes" class="font-hand text-lg text-warm-600 leading-relaxed whitespace-pre-wrap">{{ detailFp.notes }}</p>
 
           <DiaryButton variant="secondary" class="w-full mt-4" @click="detailId = null">关闭</DiaryButton>
         </div>

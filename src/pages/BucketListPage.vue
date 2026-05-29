@@ -308,7 +308,7 @@ function cancelComplete() {
             </div>
 
             <p v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.note"
-              class="text-warm-600 leading-relaxed text-sm mb-4">
+              class="text-warm-600 leading-relaxed text-sm mb-4 whitespace-pre-wrap">
               {{ bucketStore.items.find(i => i.id === viewCompletedId)?.note }}
             </p>
 
