@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import { useCareStore } from '@/stores/care'
 import DiaryButton from '@/components/ui/DiaryButton.vue'
+import LoadingDots from '@/components/ui/LoadingDots.vue'
 
 const careStore = useCareStore()
 
@@ -138,6 +139,8 @@ function onMonthPickerWheel(_col: string, event: WheelEvent) {
 <template>
   <div class="px-5 pt-8 pb-4">
     <h1 class="font-display text-2xl text-warm-800 mb-6">呵护日历 🌸</h1>
+
+    <LoadingDots v-if="!careStore.loaded" />
 
     <!-- Calendar -->
     <div class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100">

@@ -9,6 +9,7 @@ import DiaryCard from '@/components/ui/DiaryCard.vue'
 import EmptyState from '@/components/features/EmptyState.vue'
 import ImageUploader from '@/components/features/ImageUploader.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import LoadingDots from '@/components/ui/LoadingDots.vue'
 
 const bucketStore = useBucketListStore()
 const identity = useIdentityStore()
@@ -105,6 +106,8 @@ function cancelComplete() {
       <h1 class="font-display text-2xl text-warm-800">心愿清单 💝</h1>
       <DiaryButton variant="ghost" @click="openCreate">+ 心愿</DiaryButton>
     </div>
+
+    <LoadingDots v-if="!bucketStore.loaded" />
 
     <!-- Add / Edit Form -->
     <div v-if="showAdd"

@@ -10,6 +10,7 @@ import EmptyState from '@/components/features/EmptyState.vue'
 import WeatherPicker from '@/components/features/WeatherPicker.vue'
 import ImageUploader from '@/components/features/ImageUploader.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import LoadingDots from '@/components/ui/LoadingDots.vue'
 import type { Fragment } from '@/types'
 
 const fragmentsStore = useFragmentsStore()
@@ -109,8 +110,10 @@ const WEATHER_MAP: Record<string, string> = {
       <DiaryButton variant="ghost" @click="openCreate">+ 碎片</DiaryButton>
     </div>
 
+    <LoadingDots v-if="!fragmentsStore.loaded" />
+
     <EmptyState
-      v-if="fragmentsStore.loaded && fragmentsStore.items.length === 0"
+      v-else-if="fragmentsStore.items.length === 0"
       emoji="📸"
       title="还没有记录"
       description="记录我们的每一个温暖瞬间"

@@ -12,6 +12,7 @@ import EmptyState from '@/components/features/EmptyState.vue'
 import DiaryButton from '@/components/ui/DiaryButton.vue'
 import DiaryInput from '@/components/ui/DiaryInput.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import LoadingDots from '@/components/ui/LoadingDots.vue'
 import type { LoveLetter } from '@/types'
 
 const dashboardStore = useDashboardStore()
@@ -300,6 +301,8 @@ function todayStr(): string {
         💕 小白
       </button>
     </div>
+
+    <LoadingDots v-if="!dashboardStore.loaded" />
 
     <!-- ========== Anniversary ========== -->
     <section class="text-center">

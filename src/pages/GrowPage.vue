@@ -9,6 +9,7 @@ import DiaryInput from '@/components/ui/DiaryInput.vue'
 import DiaryBadge from '@/components/ui/DiaryBadge.vue'
 import EmptyState from '@/components/features/EmptyState.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import LoadingDots from '@/components/ui/LoadingDots.vue'
 
 const growStore = useGrowStore()
 const identity = useIdentityStore()
@@ -111,8 +112,10 @@ async function checkInHer(habitId: string) {
       </div>
     </div>
 
+    <LoadingDots v-if="!growStore.loaded" />
+
     <EmptyState
-      v-if="growStore.loaded && growStore.habits.length === 0 && !showForm"
+      v-else-if="growStore.habits.length === 0 && !showForm"
       emoji="🌟" title="还没有习惯" description="一起养成好习惯吧！"
     />
 

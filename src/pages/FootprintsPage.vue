@@ -8,6 +8,7 @@ import DiaryInput from '@/components/ui/DiaryInput.vue'
 import EmptyState from '@/components/features/EmptyState.vue'
 import ImageUploader from '@/components/features/ImageUploader.vue'
 import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
+import LoadingDots from '@/components/ui/LoadingDots.vue'
 
 const footprintsStore = useFootprintsStore()
 const identity = useIdentityStore()
@@ -93,8 +94,10 @@ function confirmDelete() {
       <DiaryButton variant="ghost" @click="openCreate">+ 足迹</DiaryButton>
     </div>
 
+    <LoadingDots v-if="!footprintsStore.loaded" />
+
     <EmptyState
-      v-if="footprintsStore.loaded && footprintsStore.items.length === 0"
+      v-else-if="footprintsStore.items.length === 0"
       emoji="🗺️" title="还没有旅行记录" description="记录我们一起走过的每一步"
     />
 
