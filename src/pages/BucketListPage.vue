@@ -13,6 +13,7 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog.vue'
 const bucketStore = useBucketListStore()
 const identity = useIdentityStore()
 const confirmDeleteId = ref<string | null>(null)
+const confirmUncompleteId = ref<string | null>(null)
 
 const completedCount = computed(() => bucketStore.items.filter((i) => i.completed).length)
 const totalCount = computed(() => bucketStore.items.length)
@@ -69,13 +70,25 @@ function toggleComplete(id: string) {
   const item = bucketStore.items.find((i) => i.id === id)
   if (!item) return
   if (item.completed) {
-    item.completed = false
-    item.completedAt = undefined
-    expandedId.value = null
+    confirmUncompleteId.value = id
   } else {
     expandedId.value = id
     completePhotos.value = []
     completeNote.value = ''
+  }
+}
+
+function confirmUncomplete() {
+  if (confirmUncompleteId.value) {
+    const item = bucketStore.items.find((i) => i.id === confirmUncompleteId.value)
+    if (item) {
+      item.completed = false
+      item.completedAt = undefined
+      item.photos = []
+      item.note = undefined
+    }
+    expandedId.value = null
+    confirmUncompleteId.value = null
   }
 }
 
@@ -187,6 +200,16 @@ function cancelComplete() {
       cancel-text="保留"
       @confirm="confirmDelete"
       @cancel="confirmDeleteId = null"
+    />
+
+    <ConfirmDialog
+      :show="confirmUncompleteId !== null"
+      title="取消标记"
+      message="确定要取消完成标记吗？已添加的照片和感想也会被清除。"
+      confirm-text="取消标记"
+      cancel-text="保留"
+      @confirm="confirmUncomplete"
+      @cancel="confirmUncompleteId = null"
     />
   </div>
 </template>
