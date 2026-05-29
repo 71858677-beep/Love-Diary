@@ -304,17 +304,11 @@ function todayStr(): string {
     <!-- ========== Anniversary ========== -->
     <section class="text-center">
       <p class="text-sm text-warm-400 font-body">我们已经在一起</p>
-      <div v-if="daysTogether !== null" class="mt-2">
+      <div v-if="daysTogether !== null" class="mt-2 cursor-pointer" @click="openDatePicker('edit')">
         <span class="font-display text-5xl font-bold text-warm-800 animate-count-up">
           {{ daysTogether.toLocaleString() }}
         </span>
         <span class="font-body text-xl text-warm-600 ml-2">天</span>
-        <button
-          class="block mx-auto mt-1 text-xs text-warm-400 hover:text-warm-600 underline underline-offset-2 transition-colors"
-          @click="openDatePicker('edit')"
-        >
-          修改纪念日
-        </button>
       </div>
       <EmptyState
         v-else
@@ -433,9 +427,7 @@ function todayStr(): string {
       </div>
     </section>
 
-    <p class="text-center text-xs text-warm-400">
-      点击头像更换照片 · 点击手手拍一拍 💕
-    </p>
+
 
     <!-- ========== Mailbox ========== -->
     <section class="bg-white rounded-xl shadow-diary-sm border border-warm-100 overflow-hidden">
