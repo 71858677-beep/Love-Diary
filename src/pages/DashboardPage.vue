@@ -311,7 +311,7 @@ function todayStr(): string {
         <span class="font-body text-xl text-warm-600 ml-2">天</span>
       </div>
       <EmptyState
-        v-else
+        v-else-if="dashboardStore.loaded"
         emoji="💝"
         title="设置我们的纪念日"
         description="记录属于我们的每一天"
@@ -444,7 +444,7 @@ function todayStr(): string {
       </div>
 
       <EmptyState
-        v-if="lettersStore.letters.length === 0"
+        v-if="lettersStore.loaded && lettersStore.letters.length === 0"
         emoji="💌"
         title="信箱空空"
         description="给对方写一封信吧，设定好时间才能打开哦"

@@ -80,13 +80,7 @@ function toggleComplete(id: string) {
 
 function confirmUncomplete() {
   if (confirmUncompleteId.value) {
-    const item = bucketStore.items.find((i) => i.id === confirmUncompleteId.value)
-    if (item) {
-      item.completed = false
-      item.completedAt = undefined
-      item.photos = []
-      item.note = undefined
-    }
+    bucketStore.uncompleteItem(confirmUncompleteId.value, identity.current)
     expandedId.value = null
     confirmUncompleteId.value = null
   }
@@ -127,19 +121,19 @@ function cancelComplete() {
     <!-- Stats -->
     <div class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-6">
       <div class="flex items-center justify-between mb-2">
-        <span class="text-sm text-warm-500">一起要做的 100 件事</span>
+        <span class="text-sm text-warm-500">要一起做的 100 件事</span>
         <span class="text-lg font-display font-bold text-sunshine-400">
-          {{ completedCount }} / {{ totalCount || 100 }}
+          {{ completedCount }} / 100
         </span>
       </div>
       <div class="w-full h-2 bg-warm-100 rounded-full overflow-hidden">
         <div class="h-full bg-sunshine-400 rounded-full transition-all duration-500"
-          :style="{ width: `${totalCount ? (completedCount / (totalCount || 100)) * 100 : 0}%` }" />
+          :style="{ width: `${completedCount}%` }" />
       </div>
     </div>
 
     <EmptyState
-      v-if="bucketStore.items.length === 0 && !showAdd"
+      v-if="bucketStore.loaded && bucketStore.items.length === 0 && !showAdd"
       emoji="📝" title="心愿清单还是空的" description="开始添加你们想要一起完成的事吧"
     />
 

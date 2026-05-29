@@ -94,7 +94,7 @@ function confirmDelete() {
     </div>
 
     <EmptyState
-      v-if="footprintsStore.items.length === 0"
+      v-if="footprintsStore.loaded && footprintsStore.items.length === 0"
       emoji="🗺️" title="还没有旅行记录" description="记录我们一起走过的每一步"
     />
 

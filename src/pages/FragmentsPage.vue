@@ -110,7 +110,7 @@ const WEATHER_MAP: Record<string, string> = {
     </div>
 
     <EmptyState
-      v-if="fragmentsStore.items.length === 0"
+      v-if="fragmentsStore.loaded && fragmentsStore.items.length === 0"
       emoji="📸"
       title="还没有记录"
       description="记录我们的每一个温暖瞬间"

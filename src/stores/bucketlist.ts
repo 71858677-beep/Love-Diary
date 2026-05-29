@@ -42,5 +42,16 @@ export const useBucketListStore = defineStore('bucketlist', () => {
     }
   }
 
-  return { items, loaded, init, addItem, removeItem, updateItem, completeItem }
+  function uncompleteItem(id: string, author: string) {
+    const item = items.value.find((i) => i.id === id)
+    if (item) {
+      item.completed = false
+      item.completedAt = undefined
+      item.photos = []
+      item.note = undefined
+      upsertRow(DB_TABLES.bucketItems, id, author, { ...item, author: undefined })
+    }
+  }
+
+  return { items, loaded, init, addItem, removeItem, updateItem, completeItem, uncompleteItem }
 })

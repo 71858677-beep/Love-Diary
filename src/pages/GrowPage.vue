@@ -112,7 +112,7 @@ async function checkInHer(habitId: string) {
     </div>
 
     <EmptyState
-      v-if="growStore.habits.length === 0 && !showForm"
+      v-if="growStore.loaded && growStore.habits.length === 0 && !showForm"
       emoji="🌟" title="还没有习惯" description="一起养成好习惯吧！"
     />
 
