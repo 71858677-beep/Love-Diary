@@ -117,14 +117,15 @@ function cancelComplete() {
 
     <!-- Add / Edit Form -->
     <div v-if="showAdd"
-      class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-4 flex gap-3 items-end"
+      class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-4 space-y-3"
       style="animation: card-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1)">
-      <div class="flex-1">
-        <DiaryInput v-model="formTitle" placeholder="想一起做的事..." :maxlength="50" @keyup.enter="submit" />
+      <DiaryInput v-model="formTitle" placeholder="想一起做的事..." :maxlength="50" @keyup.enter="submit" />
+      <div class="flex gap-3">
+        <DiaryButton variant="secondary" class="flex-1" @click="showAdd = false">取消</DiaryButton>
+        <DiaryButton variant="primary" class="flex-1" :disabled="!formTitle.trim()" @click="submit">
+          {{ editId ? '保存' : '添加' }}
+        </DiaryButton>
       </div>
-      <DiaryButton variant="primary" :disabled="!formTitle.trim()" @click="submit">
-        {{ editId ? '保存' : '添加' }}
-      </DiaryButton>
     </div>
 
     <!-- Stats -->

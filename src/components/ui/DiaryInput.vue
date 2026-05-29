@@ -36,13 +36,13 @@ function onInput(e: Event) {
       @blur="focused = false"
       @input="onInput"
     />
-    <input
+    <textarea
       v-else
       :value="modelValue"
       :placeholder="placeholder"
       :maxlength="maxlength"
-      :type="type || 'text'"
-      class="w-full bg-sunshine-50 border rounded-xl px-4 py-3 font-body text-base text-warm-800 placeholder:text-warm-400 outline-none transition-all duration-150"
+      rows="1"
+      class="w-full bg-sunshine-50 border rounded-xl px-4 py-3 font-body text-base text-warm-800 placeholder:text-warm-400 outline-none transition-all duration-150 resize-none field-sizing-content"
       :class="focused
         ? 'border-sunshine-400 shadow-[0_0_0_3px_rgb(255_217_61_/_0.15)] bg-white'
         : 'border-warm-200'"
