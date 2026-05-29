@@ -19,6 +19,12 @@ const confirmUncompleteId = ref<string | null>(null)
 const completedCount = computed(() => bucketStore.items.filter((i) => i.completed).length)
 const totalCount = computed(() => bucketStore.items.length)
 
+const sortedItems = computed(() => {
+  const uncompleted = bucketStore.items.filter((i) => !i.completed)
+  const completed = bucketStore.items.filter((i) => i.completed)
+  return [...uncompleted, ...completed]
+})
+
 const showAdd = ref(false)
 const editId = ref<string | null>(null)
 const formTitle = ref('')
@@ -140,8 +146,9 @@ function cancelComplete() {
       emoji="📝" title="心愿清单还是空的" description="开始添加你们想要一起完成的事吧"
     />
 
-    <div v-else class="space-y-3">
-      <div v-for="item in bucketStore.items" :key="item.id" class="animate-card-enter">
+    <div v-else>
+      <TransitionGroup name="bucket-sort" tag="div" class="space-y-3">
+      <div v-for="item in sortedItems" :key="item.id" class="animate-card-enter">
         <DiaryCard :completed="item.completed"
           :class="item.completed ? 'bg-sunshine-100 border-sunshine-300' : ''">
           <div class="flex items-center gap-3">
@@ -187,6 +194,7 @@ function cancelComplete() {
           </div>
         </DiaryCard>
       </div>
+      </TransitionGroup>
     </div>
 
     <ConfirmDialog
@@ -210,3 +218,9 @@ function cancelComplete() {
     />
   </div>
 </template>
+
+<style scoped>
+.bucket-sort-move {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+</style>
