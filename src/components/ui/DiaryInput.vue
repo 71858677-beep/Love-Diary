@@ -49,11 +49,5 @@ watch(() => props.modelValue, () => resize())
       @blur="focused = false"
       @input="onInput"
     />
-    <span
-      v-if="maxlength"
-      class="absolute bottom-2 right-3 text-[10px] text-warm-400 bg-white/80 px-1 rounded"
-    >
-      {{ modelValue.length }}/{{ maxlength }}
-    </span>
   </div>
 </template>

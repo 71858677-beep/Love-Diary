@@ -155,7 +155,7 @@ function confirmDelete() {
           <h2 class="font-display text-lg text-warm-800 mb-4">{{ editId ? '编辑足迹' : '记录旅行' }} 🗺️</h2>
 
           <div class="space-y-4">
-            <DiaryInput v-model="formDest" placeholder="目的地名称..." :maxlength="30" />
+            <DiaryInput v-model="formDest" placeholder="目的地名称..." />
 
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -175,7 +175,7 @@ function confirmDelete() {
               <ImageUploader v-model:images="formPhotos" :max="9" />
             </div>
 
-            <DiaryInput v-model="formNotes" type="textarea" placeholder="旅行备注..." :maxlength="300" />
+            <DiaryInput v-model="formNotes" type="textarea" placeholder="旅行备注..." />
           </div>
 
           <div class="mt-6 flex gap-3">

@@ -119,7 +119,7 @@ function cancelComplete() {
     <div v-if="showAdd"
       class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-4 space-y-3"
       style="animation: card-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1)">
-      <DiaryInput v-model="formTitle" placeholder="想一起做的事..." :maxlength="50" @keyup.enter="submit" />
+      <DiaryInput v-model="formTitle" placeholder="想一起做的事..." @keyup.enter="submit" />
       <div class="flex gap-3">
         <DiaryButton variant="secondary" class="flex-1" @click="showAdd = false">取消</DiaryButton>
         <DiaryButton variant="primary" class="flex-1" :disabled="!formTitle.trim()" @click="submit">
@@ -187,7 +187,7 @@ function cancelComplete() {
               <p class="text-xs text-warm-400 mb-2">打卡合照（可选）</p>
               <ImageUploader v-model:images="completePhotos" :max="6" />
             </div>
-            <DiaryInput v-model="completeNote" type="textarea" placeholder="完成感想..." :maxlength="300" />
+            <DiaryInput v-model="completeNote" type="textarea" placeholder="完成感想..." />
             <div class="flex gap-3">
               <DiaryButton variant="secondary" class="flex-1" @click="cancelComplete">先不标记</DiaryButton>
               <DiaryButton variant="primary" class="flex-1" @click="confirmComplete(item.id)">标记完成 💕</DiaryButton>

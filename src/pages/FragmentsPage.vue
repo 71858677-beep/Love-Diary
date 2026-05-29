@@ -189,7 +189,7 @@ const WEATHER_MAP: Record<string, string> = {
         <div class="love-modal-content">
           <h2 class="font-display text-lg text-warm-800 mb-4">{{ editId ? '编辑碎片' : '记录此刻' }} ✍️</h2>
 
-          <DiaryInput v-model="formText" type="textarea" placeholder="今天发生了什么..." :maxlength="500" />
+          <DiaryInput v-model="formText" type="textarea" placeholder="今天发生了什么..." />
           <div class="mt-4">
             <p class="text-xs text-warm-400 mb-2">天气</p>
             <WeatherPicker v-model="formWeather" />

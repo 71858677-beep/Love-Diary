@@ -503,9 +503,9 @@ function todayStr(): string {
               </div>
             </div>
 
-            <DiaryInput v-model="letterTitle" placeholder="信件标题..." :maxlength="30" />
+            <DiaryInput v-model="letterTitle" placeholder="信件标题..." />
 
-            <DiaryInput v-model="letterContent" type="textarea" placeholder="想对你说的话..." :maxlength="2000" />
+            <DiaryInput v-model="letterContent" type="textarea" placeholder="想对你说的话..." />
 
             <div>
               <p class="text-xs text-warm-400 mb-2">对方可以在以下时间后打开</p>

@@ -92,7 +92,7 @@ async function checkInHer(habitId: string) {
     <!-- Add / Edit Form -->
     <div v-if="showForm" class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-4 space-y-3"
       style="animation: card-enter 0.3s cubic-bezier(0.16, 1, 0.3, 1)">
-      <DiaryInput v-model="formName" placeholder="习惯名称..." :maxlength="20" />
+      <DiaryInput v-model="formName" placeholder="习惯名称..."  />
       <div>
         <p class="text-xs text-warm-400 mb-2">选择图标</p>
         <div class="flex flex-wrap gap-2">
