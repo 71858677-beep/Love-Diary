@@ -32,6 +32,8 @@ const formTitle = ref('')
 const expandedId = ref<string | null>(null)
 const completePhotos = ref<string[]>([])
 const completeNote = ref('')
+const completeDate = ref('')
+const viewCompletedId = ref<string | null>(null)
 
 function openCreate() {
   editId.value = null
@@ -77,11 +79,12 @@ function toggleComplete(id: string) {
   const item = bucketStore.items.find((i) => i.id === id)
   if (!item) return
   if (item.completed) {
-    confirmUncompleteId.value = id
+    viewCompletedId.value = id
   } else {
     expandedId.value = id
     completePhotos.value = []
     completeNote.value = ''
+    completeDate.value = new Date().toISOString().slice(0, 10)
   }
 }
 
@@ -97,6 +100,9 @@ function confirmComplete(id: string) {
   bucketStore.completeItem(id, identity.current, {
     photos: [...completePhotos.value],
     note: completeNote.value.trim() || undefined,
+    completedAt: completeDate.value
+      ? new Date(completeDate.value + 'T00:00:00').toISOString()
+      : new Date().toISOString(),
   })
   expandedId.value = null
 }
@@ -187,6 +193,11 @@ function cancelComplete() {
               <p class="text-xs text-warm-400 mb-2">打卡合照（可选）</p>
               <ImageUploader v-model:images="completePhotos" :max="6" />
             </div>
+            <div>
+              <p class="text-xs text-warm-400 mb-1">完成日期</p>
+              <input v-model="completeDate" type="date"
+                class="w-full bg-sunshine-50 border border-warm-200 rounded-xl px-3 py-2.5 text-sm text-warm-700 outline-none focus:border-sunshine-400" />
+            </div>
             <DiaryInput v-model="completeNote" type="textarea" placeholder="完成感想..." />
             <div class="flex gap-3">
               <DiaryButton variant="secondary" class="flex-1" @click="cancelComplete">先不标记</DiaryButton>
@@ -197,6 +208,38 @@ function cancelComplete() {
       </div>
       </TransitionGroup>
     </div>
+
+    <!-- View Completed Modal -->
+    <Teleport to="body">
+      <div v-if="viewCompletedId" class="love-modal-overlay" @click.self="viewCompletedId = null">
+        <div class="love-modal-content">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display text-lg text-warm-800">
+              {{ bucketStore.items.find(i => i.id === viewCompletedId)?.title }}
+            </h3>
+            <button class="text-warm-400 hover:text-warm-600 text-lg px-1" @click="viewCompletedId = null">✕</button>
+          </div>
+
+          <p class="text-xs text-warm-400 mb-4">
+            完成于 {{ bucketStore.items.find(i => i.id === viewCompletedId)?.completedAt?.slice(0, 10) || '' }}
+          </p>
+
+          <div v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.photos?.length" class="grid grid-cols-2 gap-2 mb-4">
+            <img v-for="(img, idx) in bucketStore.items.find(i => i.id === viewCompletedId)?.photos" :key="idx"
+              :src="img" class="w-full rounded-lg object-cover border border-warm-100" />
+          </div>
+
+          <p v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.note"
+            class="text-warm-600 leading-relaxed text-sm mb-4">
+            {{ bucketStore.items.find(i => i.id === viewCompletedId)?.note }}
+          </p>
+
+          <DiaryButton variant="secondary" class="w-full" @click="() => { const id = viewCompletedId; viewCompletedId = null; confirmUncompleteId = id; }">
+            取消标记 🗑️
+          </DiaryButton>
+        </div>
+      </div>
+    </Teleport>
 
     <ConfirmDialog
       :show="confirmDeleteId !== null"

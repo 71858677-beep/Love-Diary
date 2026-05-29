@@ -31,11 +31,11 @@ export const useBucketListStore = defineStore('bucketlist', () => {
     }
   }
 
-  function completeItem(id: string, author: string, extra?: { photos?: string[]; note?: string }) {
+  function completeItem(id: string, author: string, extra?: { photos?: string[]; note?: string; completedAt?: string }) {
     const item = items.value.find((i) => i.id === id)
     if (item) {
       item.completed = true
-      item.completedAt = new Date().toISOString()
+      item.completedAt = extra?.completedAt || new Date().toISOString()
       if (extra?.photos) item.photos = extra.photos
       if (extra?.note !== undefined) item.note = extra.note
       upsertRow(DB_TABLES.bucketItems, id, author, { ...item, author: undefined })
