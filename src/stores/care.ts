@@ -5,18 +5,38 @@ import { DB_TABLES } from '@/utils/db'
 
 const AVG_CYCLE_DAYS_DEFAULT = 28
 
+function calcAverageCycle(dates: string[]): number {
+  if (dates.length < 2) return AVG_CYCLE_DAYS_DEFAULT
+  const sorted = [...dates].sort()
+  let total = 0
+  let count = 0
+  for (let i = 1; i < sorted.length; i++) {
+    const diff = (new Date(sorted[i]).getTime() - new Date(sorted[i - 1]).getTime()) / 86400000
+    // Only count gaps between 21-40 days as valid cycles
+    if (diff >= 21 && diff <= 40) {
+      total += diff
+      count++
+    }
+  }
+  return count > 0 ? Math.round(total / count) : AVG_CYCLE_DAYS_DEFAULT
+}
+
 export const useCareStore = defineStore('care', () => {
   const cycleRecords = ref<string[]>([])
   const avgCycleDays = ref<number>(AVG_CYCLE_DAYS_DEFAULT)
   const loaded = ref(false)
 
   const predictedNext = computed<string | null>(() => {
-    if (cycleRecords.value.length < 2) return null
+    if (cycleRecords.value.length < 1) return null
     const sorted = [...cycleRecords.value].sort()
     const lastDate = new Date(sorted[sorted.length - 1])
     const predicted = new Date(lastDate.getTime() + avgCycleDays.value * 86400000)
     return predicted.toISOString().slice(0, 10)
   })
+
+  function recalcAverage() {
+    avgCycleDays.value = calcAverageCycle(cycleRecords.value)
+  }
 
   async function init() {
     if (loaded.value) return
@@ -26,10 +46,7 @@ export const useCareStore = defineStore('care', () => {
       .select('*')
     if (data) {
       cycleRecords.value = data.map((r: { data: { dates: string[]; avgCycleDays: number } }) => r.data.dates).flat()
-      const meta = data.find((r: { id: string }) => r.id === 'meta')
-      if (meta) {
-        avgCycleDays.value = (meta.data as { avgCycleDays: number }).avgCycleDays || AVG_CYCLE_DAYS_DEFAULT
-      }
+      recalcAverage()
     }
     loaded.value = true
   }
@@ -41,6 +58,7 @@ export const useCareStore = defineStore('care', () => {
     } else {
       cycleRecords.value.splice(idx, 1)
     }
+    recalcAverage()
     await ensureAuth()
     await supabase.from(DB_TABLES.careRecords).upsert({
       id: 'records',
