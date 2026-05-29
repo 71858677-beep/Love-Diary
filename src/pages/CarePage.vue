@@ -140,8 +140,11 @@ function onMonthPickerWheel(_col: string, event: WheelEvent) {
   <div class="px-5 pt-8 pb-4">
     <h1 class="font-display text-2xl text-warm-800 mb-6">呵护日历 🌸</h1>
 
-    <LoadingDots v-if="!careStore.loaded" />
+    <template v-if="!careStore.loaded">
+      <LoadingDots />
+    </template>
 
+    <template v-else>
     <!-- Calendar -->
     <div class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100">
       <!-- Month Header -->
@@ -361,6 +364,7 @@ function onMonthPickerWheel(_col: string, event: WheelEvent) {
         </ol>
       </div>
     </div>
+    </template>
   </div>
 </template>
 

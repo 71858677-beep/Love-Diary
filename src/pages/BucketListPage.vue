@@ -34,7 +34,13 @@ const completePhotos = ref<string[]>([])
 const completeNote = ref('')
 const completeDate = ref('')
 const viewCompletedId = ref<string | null>(null)
-const fullscreenImage = ref<string | null>(null)
+const editCompleted = ref(false)
+const editCompletedTitle = ref('')
+const editCompletedPhotos = ref<string[]>([])
+const editCompletedNote = ref('')
+const editCompletedDate = ref('')
+const fullscreenPhotos = ref<string[]>([])
+const fullscreenIndex = ref(0)
 
 function openCreate() {
   editId.value = null
@@ -90,8 +96,46 @@ function toggleComplete(id: string) {
 }
 
 function openViewCompleted(id: string) {
+  const item = bucketStore.items.find((i) => i.id === id)
+  if (!item) return
   viewCompletedId.value = id
-  fullscreenImage.value = null
+  editCompleted.value = false
+}
+
+function startEditCompleted(id: string) {
+  const item = bucketStore.items.find((i) => i.id === id)
+  if (!item) return
+  editCompleted.value = true
+  editCompletedTitle.value = item.title
+  editCompletedPhotos.value = [...(item.photos || [])]
+  editCompletedNote.value = item.note || ''
+  editCompletedDate.value = item.completedAt?.slice(0, 10) || ''
+}
+
+function saveEditCompleted(id: string) {
+  if (!editCompletedTitle.value.trim()) return
+  const item = bucketStore.items.find((i) => i.id === id)
+  if (!item) return
+  item.title = editCompletedTitle.value.trim()
+  item.photos = [...editCompletedPhotos.value]
+  item.note = editCompletedNote.value.trim() || undefined
+  if (editCompletedDate.value) {
+    item.completedAt = new Date(editCompletedDate.value + 'T00:00:00').toISOString()
+  }
+  editCompleted.value = false
+}
+
+function openFullscreen(photos: string[], index: number) {
+  fullscreenPhotos.value = photos
+  fullscreenIndex.value = index
+}
+
+function prevImage() {
+  if (fullscreenIndex.value > 0) fullscreenIndex.value--
+}
+
+function nextImage() {
+  if (fullscreenIndex.value < fullscreenPhotos.value.length - 1) fullscreenIndex.value++
 }
 
 function confirmUncomplete() {
@@ -141,7 +185,7 @@ function cancelComplete() {
     </div>
 
     <!-- Stats -->
-    <div class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-6">
+    <div v-if="bucketStore.loaded" class="bg-white rounded-xl p-4 shadow-diary-sm border border-warm-100 mb-6">
       <div class="flex items-center justify-between mb-2">
         <span class="text-sm text-warm-500">要一起做的 100 件事</span>
         <span class="text-lg font-display font-bold text-sunshine-400">
@@ -222,39 +266,72 @@ function cancelComplete() {
       <div v-if="viewCompletedId" class="love-modal-overlay" @click.self="viewCompletedId = null">
         <div class="love-modal-content">
           <div class="flex items-center justify-between mb-4">
-            <h3 class="font-display text-lg text-warm-800">
+            <h3 v-if="!editCompleted" class="font-display text-lg text-warm-800">
               {{ bucketStore.items.find(i => i.id === viewCompletedId)?.title }}
             </h3>
-            <button class="text-warm-400 hover:text-warm-600 text-lg px-1" @click="viewCompletedId = null">✕</button>
+            <div class="flex items-center gap-2">
+              <button v-if="!editCompleted" class="text-xs text-warm-400 hover:text-sunshine-500 px-1"
+                @click="startEditCompleted(viewCompletedId!)">✏️ 编辑</button>
+              <button class="text-warm-400 hover:text-warm-600 text-lg px-1" @click="viewCompletedId = null">✕</button>
+            </div>
           </div>
 
-          <p class="text-xs text-warm-400 mb-4">
-            完成于 {{ bucketStore.items.find(i => i.id === viewCompletedId)?.completedAt?.slice(0, 10) || '' }}
-          </p>
+          <template v-if="editCompleted">
+            <div class="space-y-3">
+              <DiaryInput v-model="editCompletedTitle" placeholder="心愿标题..." />
+              <div>
+                <p class="text-xs text-warm-400 mb-2">照片</p>
+                <ImageUploader v-model:images="editCompletedPhotos" :max="6" />
+              </div>
+              <div>
+                <p class="text-xs text-warm-400 mb-1">完成日期</p>
+                <input v-model="editCompletedDate" type="date"
+                  class="w-full bg-sunshine-50 border border-warm-200 rounded-xl px-3 py-2.5 text-sm text-warm-700 outline-none focus:border-sunshine-400" />
+              </div>
+              <DiaryInput v-model="editCompletedNote" type="textarea" placeholder="完成感想..." />
+              <div class="flex gap-3">
+                <DiaryButton variant="secondary" class="flex-1" @click="editCompleted = false">取消</DiaryButton>
+                <DiaryButton variant="primary" class="flex-1" :disabled="!editCompletedTitle.trim()" @click="saveEditCompleted(viewCompletedId!)">保存</DiaryButton>
+              </div>
+            </div>
+          </template>
 
-          <div v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.photos?.length" class="grid grid-cols-2 gap-2 mb-4">
-            <img v-for="(img, idx) in bucketStore.items.find(i => i.id === viewCompletedId)?.photos" :key="idx"
-              :src="img" class="w-full rounded-lg object-cover border border-warm-100 cursor-pointer hover:opacity-90 transition-opacity"
-              @click.stop="fullscreenImage = img" />
-          </div>
+          <template v-else>
+            <p class="text-xs text-warm-400 mb-4">
+              完成于 {{ bucketStore.items.find(i => i.id === viewCompletedId)?.completedAt?.slice(0, 10) || '' }}
+            </p>
 
-          <p v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.note"
-            class="text-warm-600 leading-relaxed text-sm mb-4">
-            {{ bucketStore.items.find(i => i.id === viewCompletedId)?.note }}
-          </p>
+            <div v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.photos?.length" class="grid grid-cols-2 gap-2 mb-4">
+              <img v-for="(img, idx) in (bucketStore.items.find(i => i.id === viewCompletedId)?.photos || [])" :key="idx"
+                :src="img" class="w-full rounded-lg object-cover border border-warm-100 cursor-pointer hover:opacity-90 transition-opacity"
+                @click.stop="openFullscreen(bucketStore.items.find(i => i.id === viewCompletedId)?.photos || [], idx)" />
+            </div>
 
-          <DiaryButton variant="secondary" class="w-full" @click="() => { const id = viewCompletedId; viewCompletedId = null; confirmUncompleteId = id; }">
-            取消标记 🗑️
-          </DiaryButton>
+            <p v-if="bucketStore.items.find(i => i.id === viewCompletedId)?.note"
+              class="text-warm-600 leading-relaxed text-sm mb-4">
+              {{ bucketStore.items.find(i => i.id === viewCompletedId)?.note }}
+            </p>
+
+            <DiaryButton variant="secondary" class="w-full" @click="() => { const id = viewCompletedId; viewCompletedId = null; confirmUncompleteId = id; }">
+              取消标记 🗑️
+            </DiaryButton>
+          </template>
         </div>
       </div>
     </Teleport>
 
     <!-- Fullscreen Image -->
     <Teleport to="body">
-      <div v-if="fullscreenImage" class="love-modal-overlay" style="z-index: 100; background: rgb(0 0 0 / 0.85);" @click="fullscreenImage = null">
-        <img :src="fullscreenImage" class="max-w-[95vw] max-h-[95vh] object-contain rounded-lg" @click.stop />
-        <button class="absolute top-4 right-4 text-white text-2xl" @click="fullscreenImage = null">✕</button>
+      <div v-if="fullscreenPhotos.length" class="love-modal-overlay" style="z-index: 100; background: rgb(0 0 0 / 0.9);" @click="fullscreenPhotos = []">
+        <button v-if="fullscreenIndex > 0"
+          class="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white text-xl transition-colors z-10"
+          @click.stop="prevImage">‹</button>
+        <img :src="fullscreenPhotos[fullscreenIndex]" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" @click.stop />
+        <button v-if="fullscreenIndex < fullscreenPhotos.length - 1"
+          class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 hover:bg-white/40 flex items-center justify-center text-white text-xl transition-colors z-10"
+          @click.stop="nextImage">›</button>
+        <button class="absolute top-4 right-4 text-white/80 hover:text-white text-2xl z-10" @click="fullscreenPhotos = []">✕</button>
+        <span class="absolute bottom-4 text-white/60 text-xs">{{ fullscreenIndex + 1 }} / {{ fullscreenPhotos.length }}</span>
       </div>
     </Teleport>
 

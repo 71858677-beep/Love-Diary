@@ -302,9 +302,11 @@ function todayStr(): string {
       </button>
     </div>
 
-    <LoadingDots v-if="!dashboardStore.loaded" />
+    <template v-if="!dashboardStore.loaded">
+      <LoadingDots />
+    </template>
 
-    <!-- ========== Anniversary ========== -->
+    <template v-else>
     <section class="text-center">
       <p class="text-sm text-warm-400 font-body">我们已经在一起</p>
       <div v-if="daysTogether !== null" class="mt-2 cursor-pointer" @click="openDatePicker('edit')">
@@ -673,6 +675,7 @@ function todayStr(): string {
         </div>
       </div>
     </Teleport>
+    </template>
   </div>
 </template>
 
