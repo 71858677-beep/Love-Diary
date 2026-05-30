@@ -6,7 +6,7 @@ import { useLettersStore } from '@/stores/letters'
 import { useIdentityStore } from '@/stores/identity'
 import { useImageUpload } from '@/composables/useImageUpload'
 import { useHaptic } from '@/composables/useHaptic'
-import { generateId, formatDateFull } from '@/utils/date'
+import { generateId, formatDateFull, formatDateTime } from '@/utils/date'
 import HeartBurst from '@/components/features/HeartBurst.vue'
 import EmptyState from '@/components/features/EmptyState.vue'
 import DiaryButton from '@/components/ui/DiaryButton.vue'
@@ -195,16 +195,14 @@ const letterContent = ref('')
 const letterUnlockDate = ref('')
 const letterUnlockTime = ref('')
 
-const unlockedLetters = computed(() =>
-  lettersStore.letters.filter((l) => new Date(l.unlockAt) <= new Date())
-)
-
-const lockedLetters = computed(() =>
-  lettersStore.letters.filter((l) => new Date(l.unlockAt) > new Date())
+const sortedLetters = computed(() =>
+  [...lettersStore.letters].sort((a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  )
 )
 
 const unreadCount = computed(() =>
-  unlockedLetters.value.filter((l) => !l.isRead).length
+  lettersStore.letters.filter((l) => !l.isRead && new Date(l.unlockAt) <= new Date()).length
 )
 
 function openWriteLetter() {
@@ -458,7 +456,7 @@ function todayStr(): string {
 
       <div v-else class="divide-y divide-warm-100">
         <div
-          v-for="letter in [...unlockedLetters, ...lockedLetters]"
+          v-for="letter in sortedLetters"
           :key="letter.id"
           class="px-4 py-3 flex items-center gap-3 cursor-pointer hover:bg-sunshine-50/50 transition-colors"
           :class="{ 'opacity-60': new Date(letter.unlockAt) > new Date() }"
@@ -556,7 +554,7 @@ function todayStr(): string {
 
           <h2 class="font-display text-xl text-warm-800 mb-1">{{ showLetterDetail.title }}</h2>
           <p class="text-xs text-warm-400 mb-4">
-            {{ formatDateFull(showLetterDetail.createdAt) }}
+            {{ formatDateTime(showLetterDetail.createdAt) }}
             · {{ new Date(showLetterDetail.unlockAt) <= new Date() ? '已解锁' : '🔒 未解锁' }}
           </p>
 

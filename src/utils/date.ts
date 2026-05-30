@@ -13,6 +13,16 @@ export function formatDateFull(iso: string): string {
   return `${year}年${month}月${day}日`
 }
 
+export function formatDateTime(iso: string): string {
+  const date = new Date(iso)
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+  const h = String(date.getHours()).padStart(2, '0')
+  const m = String(date.getMinutes()).padStart(2, '0')
+  return `${year}年${month}月${day}日 ${h}:${m}`
+}
+
 export function daysBetween(start: string, end: string): number {
   const s = new Date(start)
   const e = new Date(end)
